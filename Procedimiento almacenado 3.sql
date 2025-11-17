@@ -1,7 +1,7 @@
 USE ViajesTuristicos
 GO
 
-CREATE PROCEDURE sp_crear_turno
+CREATE PROCEDURE sp_crear_turno(
 	@id_lancha INT,
 	@id_destino INT,
 	@fecha DATE,
@@ -9,6 +9,7 @@ CREATE PROCEDURE sp_crear_turno
 	@precio_base DECIMAL(8,2),
 	@id_turno_creado INT OUTPUT, --Id del turno creado
 	@mensaje VARCHAR(500) --Mensaje en caso de error o exito
+)
 AS
 BEGIN
 	BEGIN TRY 
