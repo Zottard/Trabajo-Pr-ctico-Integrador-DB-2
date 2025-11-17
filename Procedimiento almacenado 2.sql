@@ -1,7 +1,7 @@
 USE ViajesTuristicos
 GO
 
-CREATE PROCEDURE sp_crear_reserva_grupal
+CREATE PROCEDURE sp_crear_reserva_grupal(
 	@id_turno INT,
 	@id_metodo_pago SMALLINT,
 	@pasajeros_data NVARCHAR(MAX), --Para que podamos hacerlo multiple, necesitamos un JSON con los datos de cada uno de los pasajeros de la reserva
@@ -9,6 +9,7 @@ CREATE PROCEDURE sp_crear_reserva_grupal
 	@reservas_creadas INT OUTPUT, --Cantidad de reservas que son creadas si todo sale bien
 	@monto_total DECIMAL(10,2) OUTPUT, --Monto total del grupo
 	@mensaje VARCHAR(500) OUTPUT --Mensaje que sale al usuario si salio todo bien o hubo un error
+)
 AS
 BEGIN
 	DECLARE @capacidad_lancha TINYINT;
@@ -74,7 +75,7 @@ BEGIN
 
 			IF @id_descuento IS NULL
 			BEGIN
-				SET @mensaje = 'Advertencia: CÛdigo de descuento inv·lido o expirado';
+				SET @mensaje = 'Advertencia: C√≥digo de descuento inv√°lido o expirado';
 			END
 		END
 		--Iniciamos los contadores
@@ -142,7 +143,7 @@ BEGIN
 				'Confirmada'
 			);
 			SET @id_reserva = SCOPE_IDENTITY();
-			--Obtenemos el porcentaje de descuento de la categorÌa ya que tenemos un trigger que asigna automaticamente la categoria con la edad
+			--Obtenemos el porcentaje de descuento de la categor√≠a ya que tenemos un trigger que asigna automaticamente la categoria con la edad
 			SELECT TOP 1 @porcentaje_categoria = porcentaje_tarifa 
 			FROM Categorias_Pasajero
 			WHERE @edad BETWEEN edad_minima AND edad_maxima
@@ -182,5 +183,4 @@ BEGIN
 	END CATCH
 END
 GO
-
 
