@@ -1,11 +1,10 @@
-USE ViajesTuristicos
-GO
-CREATE PROCEDURE sp_calcular_ingresos_periodo
-@fecha_inicio DATE,  
-@fecha_fin DATE, 
-@total_ingresos DECIMAL(10,2) OUTPUT, 
-@cantidad_reservas INT OUTPUT, 
-@clientes_unicos INT OUTPUT 
+CREATE PROCEDURE sp_calcular_ingresos_periodo(
+    @fecha_inicio DATE,
+    @fecha_fin DATE,
+    @total_ingresos DECIMAL(10,2) OUTPUT,
+    @cantidad_reservas INT OUTPUT,
+    @clientes_unicos INT OUTPUT
+)
 AS
 BEGIN
     IF @fecha_inicio > @fecha_fin
@@ -26,5 +25,4 @@ BEGIN
     SET @total_ingresos = ISNULL(@total_ingresos, 0);
     SET @cantidad_reservas = ISNULL(@cantidad_reservas, 0);
     SET @clientes_unicos = ISNULL(@clientes_unicos, 0);
-END 
-GO
+END
