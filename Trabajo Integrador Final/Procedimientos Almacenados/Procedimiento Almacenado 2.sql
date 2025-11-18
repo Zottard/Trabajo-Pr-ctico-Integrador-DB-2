@@ -75,7 +75,7 @@ BEGIN
 
 			IF @id_descuento IS NULL
 			BEGIN
-				SET @mensaje = 'Advertencia: Código de descuento inválido o expirado';
+				SET @mensaje = 'Advertencia: CÃ³digo de descuento invÃ¡lido o expirado';
 			END
 		END
 		--Iniciamos los contadores
@@ -116,10 +116,6 @@ BEGIN
 				VALUES(@dni, @nombre, @apellido,@edad, @telefono);
 				SET @id_persona = SCOPE_IDENTITY();
 			END
-			--Calculamos los montons
-			SET @monto_base = @precio_base * @porcentaje_categoria
-			SET @descuento_aplicado = @monto_base * @porcentaje_descuento;
-			SET @monto_final = @monto_base - @descuento_aplicado;
 
 			--Creamos la reserva
 			INSERT INTO Reservas(
@@ -143,11 +139,16 @@ BEGIN
 				'Confirmada'
 			);
 			SET @id_reserva = SCOPE_IDENTITY();
-			--Obtenemos el porcentaje de descuento de la categoría ya que tenemos un trigger que asigna automaticamente la categoria con la edad
+			--Obtenemos el porcentaje de descuento de la categorÃ­a ya que tenemos un trigger que asigna automaticamente la categoria con la edad
 			SELECT TOP 1 @porcentaje_categoria = porcentaje_tarifa 
 			FROM Categorias_Pasajero
 			WHERE @edad BETWEEN edad_minima AND edad_maxima
 			ORDER BY edad_minima DESC;
+
+			--Calculamos los montons
+			SET @monto_base = @precio_base * @porcentaje_categoria
+			SET @descuento_aplicado = @monto_base * @porcentaje_descuento;
+			SET @monto_final = @monto_base - @descuento_aplicado;
 
 			--Registramos el descuento si fue aplicado
 			IF @id_descuento IS NOT NULL
@@ -176,6 +177,12 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		IF @@TRANCOUNT > 0
+			
+			IF CURSOR_STATUS('local','pasajeros_cursor') >= 0
+			BEGIN
+				CLOSE pasajeros_cursor;
+				DEALLOCATE pasajeros_cursor;
+			END
 			ROLLBACK TRANSACTION;
 			SET @mensaje = 'Error: ' + ERROR_MESSAGE();
 			SET @reservas_creadas = 0;
@@ -183,3 +190,4 @@ BEGIN
 	END CATCH
 END
 GO
+
