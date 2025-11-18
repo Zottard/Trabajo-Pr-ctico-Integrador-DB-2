@@ -184,3 +184,5 @@ BEGIN
 END
 GO
 
+drop procedure sp_crear_reserva_grupal
+go
